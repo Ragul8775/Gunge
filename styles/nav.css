@@ -1,0 +1,76 @@
+.nav-open {
+  background-color: rgba(0, 0, 0, 0.5); 
+/* Adjust background opacity/color as needed */
+}
+
+.nav-closed {
+  background-color: transparent; /* Keeps background transparent when nav is closed */
+}
+
+ 
+ .mob {
+    position: fixed;
+    top: -12px;
+    left: 0;
+    bottom: 0;
+    width: auto;
+    z-index: 10;
+    display: flex;
+    justify-content: left;
+   
+   }
+  
+
+.mobbtn{
+    outline: none;
+    border: none;
+    z-index: 20;
+    cursor: pointer;
+    position: absolute;
+    top: 18px;
+    left: 15px;
+    width: 50px;
+    height: 50px;
+  }
+  
+.mobul,
+  .moblist {
+    margin: 0;
+    padding: 0;
+  }
+  
+.mobul {
+    padding: 25px;
+    position: absolute;
+    top: 4.1rem;
+    width: 230px;
+    height: 100%;
+    left: 0;
+    background-color: inherit; 
+  }
+  
+ .moblist {
+    list-style: none;
+    margin-bottom: 20px;
+    display: flex;
+    align-items: center;
+    cursor: pointer;
+    color: #E5E5CB;
+  }
+
+  
+  .refresh {
+    padding: 10px;
+    position: absolute;
+    background: rgba(0, 0, 0, 0.4);
+    border-radius: 10px;
+    width: 20px;
+    height: 20px;
+    top: 10px;
+    right: 10px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+  }
+  
