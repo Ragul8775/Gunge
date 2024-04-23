@@ -1,9 +1,11 @@
-import React from 'react'
+"use client";
+import { CartContext } from "@/components/CartContext";
+import React, { useContext } from "react";
 
 const checkout = () => {
-  return (
-    <div>checkout</div>
-  )
-}
+  console.log(useContext(CartContext)); // This should log a defined value
 
-export default checkout
+  return <div>Checkout Amount: ₹</div>;
+};
+
+export default checkout;

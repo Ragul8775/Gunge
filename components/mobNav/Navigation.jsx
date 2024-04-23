@@ -11,10 +11,13 @@ const variants = {
   },
 };
 
-export const Navigation = () => (
-  <motion.ul variants={variants} className="mobul text-cream ">
+export const Navigation = ({ isOpen }) => (
+  <motion.ul
+    variants={variants}
+    className={`mobul text-cream ${isOpen ? "block" : "hidden"}`}
+  >
     <MenuItem link={"Home"} href={"/"} />
-    <MenuItem link={"Category"} href={"/"} />
+    <MenuItem link={"Products"} href={"/products"} />
     <MenuItem link={"Cart"} href={"/cart"} />
     <MenuItem link={"Login"} href={"/"} />
   </motion.ul>

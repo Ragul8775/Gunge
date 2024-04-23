@@ -22,8 +22,9 @@ module.exports = {
         brown: "#1a120b",
         cream: "#E5E5CB",
         light: "#513822",
-        darkCream:"#D5CEA3",
-        creamLight:"#F1F0E7",
+        darkCream: "#D5D0AD",
+        creamLight: "#F1F0E7",
+        productBg: "#93907E",
       },
       animation: {
         shine: "shine 1s",

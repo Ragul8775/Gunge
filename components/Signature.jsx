@@ -33,7 +33,7 @@ const Signature = () => {
                   className="max-w-sm rounded-2xl overflow-hidden shadow-lg bg-cream text-black m-auto p-2"
                 >
                   {" "}
-                  <Link href={`/products/${product._id}`}>
+                  <Link href={`/products/id?id=${product._id}`}>
                     <Image
                       src={product.images[0]}
                       alt="products"
@@ -43,8 +43,8 @@ const Signature = () => {
                     />
                   </Link>
                   <div className="px-6 py-4">
-                    <div className="font-bold text-3xl mb-2">
-                      <Link href={`/products/${product._id}`}>
+                    <div className="font-bold text-2xl mb-2">
+                      <Link href={`/products/id?id=${product._id}`}>
                         {product.title}
                       </Link>
                     </div>

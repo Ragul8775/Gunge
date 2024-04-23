@@ -1,4 +1,4 @@
-'use client'
+"use client";
 import Link from "next/link";
 import React, { useContext } from "react";
 import Image from "next/image";
@@ -7,11 +7,11 @@ import { Example } from "./mobNav/Example";
 import { CartContext } from "./CartContext";
 
 const Header = () => {
-  const {cartProducts}= useContext(CartContext)
+  const { cartProducts } = useContext(CartContext);
   return (
     <nav className=" fixed top-0 left-0 w-full z-50 bg-gray-300 bg-opacity-60 sm:bg-opacity-100 font-grunge h-14 flex items-center">
       <div className="absolute sm:hidden">
-        <Example/>
+        <Example />
       </div>
       <div className="w-1/2 sm:bg-brown text-cream flex justify-evenly py-4 text-xl ">
         <Link
@@ -21,10 +21,10 @@ const Header = () => {
           <h1>Home</h1>
         </Link>
         <Link
-          href={"/"}
+          href={"/products"}
           className="hover:underline cursor-pointer hidden sm:block"
         >
-          <h1>Category</h1>
+          <h1>Products</h1>
         </Link>
       </div>
       <Image
