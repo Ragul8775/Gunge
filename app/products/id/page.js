@@ -1,17 +1,26 @@
 "use client";
 import Navbar from "@/components/Navbar";
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { useSearchParams, useRouter } from "next/navigation";
 import axios from "axios";
 import { IoBagCheckOutline, IoCartOutline } from "react-icons/io5";
-import ProductImages from "@/components/ProductImages";
+
+import { CartContext } from "@/components/CartContext";
+import Link from "next/link";
 const singleProduct = () => {
   const [product, setProduct] = useState([]);
   const searchParams = useSearchParams();
   const productId = searchParams.get("id");
   const [activeImage, setActiveImage] = useState(null);
-  console.log(activeImage);
 
+  const { addProduct, cartProducts, removeProduct } = useContext(CartContext);
+  const addFeaturedToCart = (product) => {
+    console.log(product);
+    addProduct(product);
+  };
+  const minusOfThisProduct = (id) => {
+    removeProduct(id);
+  };
   useEffect(() => {
     axios
       .get(`/api/products/${productId}`)
@@ -80,11 +89,19 @@ const singleProduct = () => {
                 </div>
                 <div className="flex">
                   <div className="flex items-center justify-between bg-gray-200 text-black font-semibold h-8 rounded ">
-                    <button className="bg-productBg text-gray-800 rounded-l-sm px-2 py-1">
+                    <button
+                      className="bg-productBg text-gray-800 rounded-l-sm px-2 py-1"
+                      onClick={() => minusOfThisProduct(productId)}
+                    >
                       -
                     </button>
-                    <span className="px-4">3</span>
-                    <button className="bg-productBg text-gray-800 rounded-r-sm px-2 py-1">
+                    <span className="px-4">
+                      {cartProducts.filter((id) => id === productId).length}
+                    </span>
+                    <button
+                      className="bg-productBg text-gray-800 rounded-r-sm px-2 py-1"
+                      onClick={() => addFeaturedToCart(productId)}
+                    >
                       +
                     </button>
                   </div>
@@ -95,10 +112,12 @@ const singleProduct = () => {
                   <IoBagCheckOutline />
                   <h1>Buy </h1>
                 </button>
-                <button className="flex items-center justify-around px-8 text-cream bg-productBg shadow-xl py-3 gap-2 text-xl font-grunge font-bold rounded-lg">
-                  <IoCartOutline />
-                  <h1>Cart</h1>
-                </button>
+                <Link href={"/cart"}>
+                  <button className="flex items-center justify-around px-8 text-cream bg-productBg shadow-xl py-3 gap-2 text-xl font-grunge font-bold rounded-lg">
+                    <IoCartOutline />
+                    <h1>Cart</h1>
+                  </button>
+                </Link>
               </div>
             </div>
           </div>

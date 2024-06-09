@@ -16,7 +16,6 @@ const Cart = () => {
     addProduct,
     removeProduct,
     applyPromoCode,
-
     discount,
     updateTotal,
   } = useContext(CartContext);
@@ -167,7 +166,7 @@ const Cart = () => {
                   Order Summary
                 </h1>
                 <hr className="w-54 h-1 mx-auto my-2 bg-gray-700 border-0 rounded "></hr>
-                <div className="flex flex-col px-4 justify-around gap-4 py-8">
+                <div className="flex flex-col px-4 justify-evenly gap-10  h-full">
                   <div className="flex flex-col gap-1 ">
                     <label className="text-lg text-cream font-bold">
                       Promocode
