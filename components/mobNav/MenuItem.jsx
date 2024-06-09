@@ -1,4 +1,5 @@
 import { motion } from "framer-motion";
+
 import Link from "next/link";
 
 const variants = {
@@ -20,15 +21,17 @@ const variants = {
 
 export const MenuItem = ({ link, href }) => {
   return (
-    <motion.li
-      className="moblist"
-      variants={variants}
-      whileHover={{ scale: 1.1 }}
-      whileTap={{ scale: 0.95 }}
-    >
-      <Link href={href}>
-        <h1 className="text-2xl">{link}</h1>
-      </Link>
-    </motion.li>
+    <>
+      <motion.li
+        className="moblist"
+        variants={variants}
+        whileHover={{ scale: 1.1 }}
+        whileTap={{ scale: 0.95 }}
+      >
+        <Link href={href}>
+          <h1 className="text-2xl">{link}</h1>
+        </Link>
+      </motion.li>
+    </>
   );
 };

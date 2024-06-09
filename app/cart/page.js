@@ -159,7 +159,7 @@ const Cart = () => {
               )}
             </div>
             {!!cartProducts?.length && (
-              <div className="bg-brown text-creamLight rounded-lg p-4">
+              <div className="bg-brown text-creamLight rounded-lg p-4 py-4">
                 {" "}
                 {/* Replace with your content or components */}
                 <h1 className="font-bold font-grunge text-2xl text-center">

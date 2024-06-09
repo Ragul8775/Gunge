@@ -1,8 +1,7 @@
 import { Inter, Roboto_Mono, Oswald } from "next/font/google";
 import "../styles/globals.css";
-import { CartContextProvider } from "../components/CartContext"
-
-
+import { CartContextProvider } from "../components/CartContext";
+import Provider from "@/components/Provider";
 
 const inter = Inter({
   subsets: ["latin"],
@@ -32,13 +31,9 @@ export default function RootLayout({ children }) {
       <body
         className={`${inter.variable} ${roboto_mono.variable} ${oswald.variable}`}
       >
-<CartContextProvider>
-        
-          
-        {children}
-
-        
-        </CartContextProvider>
+        <Provider>
+          <CartContextProvider>{children}</CartContextProvider>
+        </Provider>
       </body>
     </html>
   );

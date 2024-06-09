@@ -47,7 +47,7 @@ const checkout = () => {
       <div className="pt-20  min-h-screen pattern-4 py-6 ">
         <div className="container mx-auto max-w-[1200px] px-[20px]">
           <div className="grid grid-cols-1  gap-6 my-12 md:grid-cols-[1.4fr_0.6fr]">
-            <div className="bg-brown py-4 px-3 rounded-l-lg shadow-lg">
+            <div className="bg-brown py-4 px-3 rounded-l-lg shadow-lg ">
               <ProgressBar
                 currentStep={currentStep}
                 totalSteps={totalSteps}
