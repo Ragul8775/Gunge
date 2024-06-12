@@ -5,31 +5,23 @@ import React, { useContext, useEffect, useState } from "react";
 import CryptoJS from "crypto-js";
 import ProgressBar from "@/components/checkOut/ProgressBar";
 import AddresForm from "@/components/checkOut/AddresForm";
+import Payment from "@/components/checkOut/Payment";
 
-
-const checkout = () => {
+const Checkout = () => {
   const [amount, setAmount] = useState("");
   const { cartProducts } = useContext(CartContext);
   const [addressDetails, setAddressDetails] = useState({
-    firstName: '',
-    lastName: '',
-    email: '',
-    phone: '',
-    addressLine1: '',
-    addressLine2: '',
-    city: '',
-    state: '',
-    zipCode: '',
-    country: ''
-});
-
-const handleAddressChange = (e) => {
-    const { name, value } = e.target;
-    setAddressDetails(prevDetails => ({
-        ...prevDetails,
-        [name]: value
-    }));
-};
+    firstName: "",
+    lastName: "",
+    email: "",
+    phone: "",
+    addressLine1: "",
+    addressLine2: "",
+    city: "",
+    state: "",
+    pinCode: "",
+  });
+  const [error, setError] = useState("");
 
   useEffect(() => {
     const total = localStorage.getItem("Clear");
@@ -37,32 +29,70 @@ const handleAddressChange = (e) => {
       setAmount(decrytoionOfTotal(total));
     }
   }, []);
+
   function decrytoionOfTotal(value) {
     const passphrase = "Grunge";
     const encrypted = value;
     if (!encrypted) return null;
-
     const bytes = CryptoJS.AES.decrypt(encrypted, passphrase);
     const decryptedData = JSON.parse(bytes.toString(CryptoJS.enc.Utf8));
-
     return decryptedData;
   }
+
   const [currentStep, setCurrentStep] = useState(1);
   const totalSteps = 3;
-  const stepTitles = ["Address", "Payment", "Confirmation"]; // Titles for each step
+  const stepTitles = ["Address", "Payment", "Confirmation"];
+
+  const handleAddressChange = (e) => {
+    const { name, value } = e.target;
+    setAddressDetails((prevDetails) => ({
+      ...prevDetails,
+      [name]: value,
+    }));
+    setError(""); // Reset error message on input change
+  };
+
+  const validateAddressDetails = () => {
+    const {
+      firstName,
+      lastName,
+      email,
+      phone,
+      addressLine1,
+      city,
+      state,
+      pinCode,
+    } = addressDetails;
+    if (
+      !firstName ||
+      !lastName ||
+      !email ||
+      !phone ||
+      !addressLine1 ||
+      !city ||
+      !state ||
+      !pinCode
+    ) {
+      setError("Please fill in all required fields.");
+      return false;
+    }
+
+    return true;
+  };
 
   const goToNextStep = () => {
+    if (currentStep === 1 && !validateAddressDetails()) {
+      return; // Prevent step progression if validation fails
+    }
     if (currentStep < totalSteps) {
       setCurrentStep(currentStep + 1);
     }
   };
-
   const goToPreviousStep = () => {
     if (currentStep > 1) {
       setCurrentStep(currentStep - 1);
     }
   };
-
   return (
     <>
       <Navbar />
@@ -76,8 +106,20 @@ const handleAddressChange = (e) => {
                 titles={stepTitles}
               />
               {currentStep === 1 && (
-                <AddresForm onNext={() => setCurrentStep(2) } addressDetails={addressDetails}
-                onAddressChange={handleAddressChange}/>
+                <AddresForm
+                  onNext={() => setCurrentStep(2)}
+                  addressDetails={addressDetails}
+                  onAddressChange={handleAddressChange}
+                />
+              )}
+              {currentStep === 2 && (
+                <Payment
+                  onNext={() => setCurrentStep()}
+                  amount={amount}
+                  name={
+                    addressDetails.firstName + " " + addressDetails.lastName
+                  }
+                />
               )}
               <div className="text-center mt-4 w-full flex justify-between">
                 <button
@@ -86,7 +128,7 @@ const handleAddressChange = (e) => {
                 >
                   Previous
                 </button>
-
+                {error && <p className="text-red-500">{error}</p>}
                 <button
                   className="text-cream bg-light hover:bg-productBg font-bold py-2 px-4 rounded"
                   onClick={goToNextStep}
@@ -120,4 +162,4 @@ const handleAddressChange = (e) => {
   );
 };
 
-export default checkout;
+export default Checkout;

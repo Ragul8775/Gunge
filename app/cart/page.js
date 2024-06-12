@@ -9,7 +9,7 @@ import { FaArrowRightLong } from "react-icons/fa6";
 import { useRouter } from "next/navigation";
 import { useSession } from "next-auth/react";
 const Cart = () => {
-  const {data: session} = useSession()
+  const { data: session } = useSession();
   const [products, setProducts] = useState([]);
   const [promoInput, setPromoInput] = useState("");
   const router = useRouter();
@@ -56,7 +56,11 @@ const Cart = () => {
   const handleCheckOut = (e) => {
     e.preventDefault();
     updateTotal(discountTotal);
-    router.push(session?.user ? "checkout" : "login");
+    router.push(
+      session?.user
+        ? "checkout"
+        : `/login?callbackUrl=${encodeURIComponent(window.location.href)}`
+    );
   };
   return (
     <>
@@ -207,7 +211,6 @@ const Cart = () => {
                     <button
                       className="block w-full rounded-lg text-brown bg-cream py-1 mb-3 font-bold font-oswald hover:bg-creamLight"
                       onClick={handleCheckOut}
-                      
                     >
                       Continue to Payment
                     </button>
