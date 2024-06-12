@@ -7,7 +7,9 @@ import Link from "next/link";
 import Navbar from "../../components/Navbar";
 import { FaArrowRightLong } from "react-icons/fa6";
 import { useRouter } from "next/navigation";
+import { useSession } from "next-auth/react";
 const Cart = () => {
+  const {data: session} = useSession()
   const [products, setProducts] = useState([]);
   const [promoInput, setPromoInput] = useState("");
   const router = useRouter();
@@ -54,7 +56,7 @@ const Cart = () => {
   const handleCheckOut = (e) => {
     e.preventDefault();
     updateTotal(discountTotal);
-    router.push("checkout");
+    router.push(session?.user ? "checkout" : "login");
   };
   return (
     <>
@@ -159,7 +161,7 @@ const Cart = () => {
               )}
             </div>
             {!!cartProducts?.length && (
-              <div className="bg-brown text-creamLight rounded-lg p-4 py-4">
+              <div className="bg-brown text-creamLight rounded-lg p-4 ">
                 {" "}
                 {/* Replace with your content or components */}
                 <h1 className="font-bold font-grunge text-2xl text-center">
@@ -203,8 +205,9 @@ const Cart = () => {
                     </div>
 
                     <button
-                      className="block w-full rounded-lg text-brown bg-cream py-1 font-bold font-oswald hover:bg-creamLight"
+                      className="block w-full rounded-lg text-brown bg-cream py-1 mb-3 font-bold font-oswald hover:bg-creamLight"
                       onClick={handleCheckOut}
+                      
                     >
                       Continue to Payment
                     </button>

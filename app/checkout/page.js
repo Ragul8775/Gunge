@@ -5,10 +5,32 @@ import React, { useContext, useEffect, useState } from "react";
 import CryptoJS from "crypto-js";
 import ProgressBar from "@/components/checkOut/ProgressBar";
 import AddresForm from "@/components/checkOut/AddresForm";
+
+
 const checkout = () => {
   const [amount, setAmount] = useState("");
   const { cartProducts } = useContext(CartContext);
-  console.log(amount);
+  const [addressDetails, setAddressDetails] = useState({
+    firstName: '',
+    lastName: '',
+    email: '',
+    phone: '',
+    addressLine1: '',
+    addressLine2: '',
+    city: '',
+    state: '',
+    zipCode: '',
+    country: ''
+});
+
+const handleAddressChange = (e) => {
+    const { name, value } = e.target;
+    setAddressDetails(prevDetails => ({
+        ...prevDetails,
+        [name]: value
+    }));
+};
+
   useEffect(() => {
     const total = localStorage.getItem("Clear");
     if (total) {
@@ -54,7 +76,8 @@ const checkout = () => {
                 titles={stepTitles}
               />
               {currentStep === 1 && (
-                <AddresForm onNext={() => setCurrentStep(2)} />
+                <AddresForm onNext={() => setCurrentStep(2) } addressDetails={addressDetails}
+                onAddressChange={handleAddressChange}/>
               )}
               <div className="text-center mt-4 w-full flex justify-between">
                 <button

@@ -1,6 +1,6 @@
 import React from "react";
 
-const AddresForm = () => {
+const AddresForm = ({ addressDetails, onAddressChange }) => {
   return (
     // component
 
@@ -97,27 +97,9 @@ const AddresForm = () => {
                 <span className="pl-2 mx-1">Save</span>
               </button>
             </div>
-            <div className="flex-initial">
-              <button
-                type="button"
-                className="flex items-center px-5 py-2.5 font-medium tracking-wide text-black capitalize rounded-md hover:bg-red-200 hover:fill-current hover:text-red-600 focus:outline-none transition duration-300 transform active:scale-95 ease-in-out"
-              >
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  height="24px"
-                  viewBox="0 0 24 24"
-                  width="24px"
-                >
-                  <path d="M0 0h24v24H0V0z" fill="none"></path>
-                  <path d="M8 9h8v10H8z" opacity=".3"></path>
-                  <path d="M15.5 4l-1-1h-5l-1 1H5v2h14V4zM6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM8 9h8v10H8V9z"></path>
-                </svg>
-                <span className="pl-2 mx-1">Delete</span>
-              </button>
-            </div>
           </div>
         </div>
-        <div className="mt-5  shadow cursor-pointer rounded-xl px-3 flex flex-col gap-3 font-sans">
+        {/* <div className="mt-5  shadow cursor-pointer rounded-xl px-3 flex flex-col gap-3 font-sans">
           <div className="flex items-center bg-white px-2 rounded-lg gap-3">
             <div className="flex-1 py-2 pl-1 overflow-hidden">
               <ul>
@@ -151,7 +133,7 @@ const AddresForm = () => {
               </button>
             </div>
           </div>
-        </div>
+        </div> */}
       </div>
     </div>
   );
