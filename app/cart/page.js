@@ -8,10 +8,12 @@ import Navbar from "../../components/Navbar";
 import { FaArrowRightLong } from "react-icons/fa6";
 import { useRouter } from "next/navigation";
 import { useSession } from "next-auth/react";
+
 const Cart = () => {
   const { data: session } = useSession();
   const [products, setProducts] = useState([]);
   const [promoInput, setPromoInput] = useState("");
+  const [total, setTotal] = useState(0);
   const router = useRouter();
   const {
     cartProducts,
@@ -21,19 +23,40 @@ const Cart = () => {
     discount,
     updateTotal,
   } = useContext(CartContext);
+  console.log(products);
+  console.log(cartProducts);
   const moreOfThisProduct = (id) => {
     addProduct(id);
   };
   const minusOfThisProduct = (id) => {
     removeProduct(id);
   };
-  let total = 0;
-  for (const productId of cartProducts) {
-    const price = products.find((p) => p._id === productId)?.price || 0;
-    if (price) {
-      total += price;
-    }
-  }
+  const aggregateCartItems = () => {
+    const aggregation = {};
+
+    cartProducts.forEach((item) => {
+      const key = `${item.product}-${item.size}`;
+      if (!aggregation[key]) {
+        aggregation[key] = { ...item, quantity: 0 };
+      }
+      aggregation[key].quantity += 1;
+    });
+
+    return Object.values(aggregation);
+  };
+
+  const aggregatedCartProducts = aggregateCartItems();
+  console.log(aggregatedCartProducts);
+  useEffect(() => {
+    const newTotal = aggregatedCartProducts.reduce((total, item) => {
+      const product = products.find((prod) => prod._id === item.product);
+      return product ? total + product.price * item.quantity : total;
+    }, 0);
+
+    setTotal(newTotal);
+  }, [aggregatedCartProducts, products]);
+  console.log(total);
+
   const discountTotal = Math.round(total - (total * discount) / 100);
   const handleApplyPromocode = () => {
     applyPromoCode(promoInput);
@@ -41,27 +64,47 @@ const Cart = () => {
   };
   useEffect(() => {
     if (cartProducts.length > 0) {
+      const productIds = cartProducts.map((item) => item.product);
       axios
-        .post("/api/cart", { ids: cartProducts }) // Ensure to send an object with ids
-        .then((response) => {
-          console.log(response.data);
-          setProducts(response.data);
-        })
-        .catch((error) => console.error("Error posting cart data:", error));
-    } else {
-      setProducts([]);
+        .post("/api/cart", { ids: productIds })
+        .then((response) => setProducts(response.data))
+        .catch((error) => console.error("Error fetching products:", error));
     }
   }, [cartProducts]);
 
+  useEffect(() => {
+    if (products.length > 0) {
+      const aggregatedProducts = products
+        .map((prod) => {
+          // Calculate the quantity of each product based on its ID
+          const quantity = cartProducts.filter(
+            (item) => item.product === prod._id
+          ).length;
+
+          // Extract only necessary details to send to the context
+          return {
+            id: prod._id,
+            title: prod.title,
+            price: prod.price,
+            quantity: quantity,
+            size: cartProducts.find((item) => item.product === prod._id)?.size, // Ensure size is taken from cartProducts
+          };
+        })
+        .filter((prod) => prod.quantity > 0); // Filter out products with no quantity to avoid sending them unnecessarily
+
+      updateTotal(aggregatedProducts);
+    }
+  }, [products, cartProducts]);
   const handleCheckOut = (e) => {
     e.preventDefault();
-    updateTotal(discountTotal);
+
     router.push(
       session?.user
-        ? "checkout"
+        ? "/checkout"
         : `/login?callbackUrl=${encodeURIComponent(window.location.href)}`
     );
   };
+
   return (
     <>
       <Navbar />
@@ -83,79 +126,53 @@ const Cart = () => {
                   <thead className="text-md uppercase bg-brown text-cream">
                     <tr>
                       <th className="px-6 py-3 rounded-s-lg">Product</th>
+                      <th className="px-6 py-3">Size</th>
                       <th className="px-6 py-3">Quantity</th>
                       <th className="px-6 py-3 rounded-e-lg">Price</th>
                     </tr>
                   </thead>
                   <tbody>
-                    {products.map((prod) => (
-                      <tr key={prod._id} className="bg-gray-200 shadow">
-                        <td className="px-6 py-4 text-left max-w-48">
-                          <div className="flex gap-2  items-center rounded-lg overflow-hidden flex-col sm:flex-row">
-                            <Image
-                              src={prod.images[0]}
-                              height={80}
-                              width={80}
-                              alt="prod-img"
-                              className="max-w-full"
-                            />
-                            <h1 className="text-wrap">{prod.title}</h1>
-                          </div>
-                        </td>
-                        <td className="px-6 py-4 text-center flex justify-center my-4">
-                          <button
-                            className="bg-brown text-cream text-2xl px-2 py-1 rounded-l-md"
-                            onClick={() => minusOfThisProduct(prod._id)}
-                          >
-                            <svg
-                              xmlns="http://www.w3.org/2000/svg"
-                              fill="none"
-                              viewBox="0 0 24 24"
-                              stroke-width="1.5"
-                              stroke="currentColor"
-                              class="w-4 h-4"
-                            >
-                              <path
-                                stroke-linecap="round"
-                                stroke-linejoin="round"
-                                d="M5 12h14"
+                    {aggregatedCartProducts.map((item) => {
+                      const prod = products.find((p) => p._id === item.product);
+                      if (!prod) return null; // Skip rendering if product details are not found
+
+                      return (
+                        <tr
+                          key={item.product + item.size}
+                          className="bg-gray-200 shadow"
+                        >
+                          <td className="px-6 py-4 text-left max-w-48">
+                            <div className="flex gap-2 items-center rounded-lg overflow-hidden flex-col sm:flex-row">
+                              <Image
+                                src={prod.images[0]}
+                                height={80}
+                                width={80}
+                                alt="Product image"
+                                className="max-w-full"
                               />
-                            </svg>
-                          </button>
-                          <p className="px-3 bg-cream py-1 font-bold">
-                            {
-                              cartProducts.filter((id) => id === prod._id)
-                                .length
-                            }
-                          </p>
-                          <button
-                            className="bg-brown text-cream text-2xl px-2 rounded-r-md"
-                            onClick={() => moreOfThisProduct(prod._id)}
-                          >
-                            <svg
-                              xmlns="http://www.w3.org/2000/svg"
-                              fill="none"
-                              viewBox="0 0 24 24"
-                              stroke-width="1.5"
-                              stroke="currentColor"
-                              class="w-4 h-4"
+                              <h1 className="text-wrap">{prod.title}</h1>
+                            </div>
+                          </td>
+                          <td className="px-6 py-4 font-bold">{item.size}</td>
+                          <td className="px-6 py-4 text-center flex justify-center my-4 gap-3">
+                            <p className="px-3 bg-cream py-1 font-bold">
+                              {item.quantity}
+                            </p>
+                            <button
+                              className=" underline text-red-600 rounded-md italic hover:text-red-400"
+                              onClick={() => minusOfThisProduct(item.product)}
                             >
-                              <path
-                                stroke-linecap="round"
-                                stroke-linejoin="round"
-                                d="M12 4.5v15m7.5-7.5h-15"
-                              />
-                            </svg>
-                          </button>
-                        </td>
-                        <td className="px-6 py-4 font-bold">
-                          ₹{" "}
-                          {cartProducts.filter((id) => id === prod._id).length *
-                            prod.price}
-                        </td>
-                      </tr>
-                    ))}
+                              Remove
+                            </button>
+                          </td>
+                          <td className="px-6 py-4 font-bold">
+                            ₹ {item.quantity * prod.price}
+                          </td>
+                        </tr>
+                      );
+                    })}
                     <tr className="bg-gray-200 shadow">
+                      <td></td>
                       <td></td>
                       <td className="px-6 py-4 font-bold text-lg">Total:</td>
                       <td className="px-6 py-4 font-bold text-lg">₹{total}</td>

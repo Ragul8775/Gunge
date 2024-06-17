@@ -1,47 +1,54 @@
 "use client";
 import CryptoJS from "crypto-js";
-import { createContext, useEffect, useState } from "react";
+import { createContext, useContext, useEffect, useState } from "react";
+
 export const CartContext = createContext({});
 
 export function CartContextProvider({ children }) {
   const ls = typeof window !== "undefined" ? window.localStorage : null;
   const [cartProducts, setCartProducts] = useState([]);
+  const [total, setTotal] = useState({ amount: 0, products: [] });
   const [promocode, setPromocode] = useState("");
   const [discount, setDiscount] = useState(0);
-  const [total, setTotal] = useState(0);
+
   useEffect(() => {
-    if (cartProducts?.length > 0) {
-      ls?.setItem("cart", JSON.stringify(cartProducts));
-    }
-  }, [cartProducts]);
-  useEffect(() => {
-    if (ls && ls.getItem("cart")) {
-      setCartProducts(JSON.parse(ls.getItem("cart")));
+    const storedCart = ls?.getItem("cart");
+    if (storedCart) {
+      setCartProducts(JSON.parse(storedCart));
     }
   }, []);
-  function encryptAndStore(key, value) {
-    const passphrase = "Grunge";
-    const encrypted = CryptoJS.AES.encrypt(
-      JSON.stringify(value),
-      passphrase
-    ).toString();
-    ls.setItem(key, encrypted);
-  }
-  function addProduct(productId) {
-    console.log(productId);
-    setCartProducts((prev) => [...prev, productId]);
-  }
-  function removeProduct(productId) {
-    setCartProducts((prev) => {
-      const newCart = prev.filter(
-        (id, index) => id !== productId || index !== prev.lastIndexOf(productId)
-      );
-      if (newCart.length === 0) {
-        ls?.removeItem("cart");
-      }
-      return newCart;
-    });
-  }
+
+  useEffect(() => {
+    if (cartProducts.length > 0) {
+      ls?.setItem("cart", JSON.stringify(cartProducts));
+    } else {
+      ls?.removeItem("cart");
+    }
+  }, [cartProducts]);
+
+  const addProduct = (product) => {
+    setCartProducts((prev) => [...prev, product]);
+  };
+
+  const removeProduct = (productId) => {
+    setCartProducts((prev) =>
+      prev.filter((item) => item.product !== productId)
+    );
+  };
+
+  const updateTotal = (products) => {
+    const newTotal = products.reduce((acc, item) => {
+      return acc + item.price * item.quantity;
+    }, 0);
+    setTotal({ amount: newTotal, products });
+    ls?.setItem(
+      "Total",
+      JSON.stringify({
+        amount: newTotal,
+        products,
+      })
+    );
+  };
   const promoCodes = {
     SAVE10: 10,
     GRUNGE20: 15,
@@ -60,28 +67,16 @@ export function CartContextProvider({ children }) {
       alert("Invalid PromoCode");
     }
   }
-  function removePromoCode() {
-    setDiscount(0);
-    setPromocode("");
-  }
-  const updateTotal = (newTotal) => {
-    console.log("Updating total to:", newTotal);
-    setTotal(newTotal);
-    encryptAndStore("Clear", newTotal);
-  };
   return (
     <CartContext.Provider
       value={{
         cartProducts,
-        setCartProducts,
         addProduct,
         removeProduct,
-        promocode,
-        applyPromoCode,
-        removePromoCode,
-        discount,
-        updateTotal,
         total,
+        updateTotal,
+        discount,
+        applyPromoCode,
       }}
     >
       {children}

@@ -8,6 +8,7 @@ import { CartContext } from "@/components/CartContext";
 import Link from "next/link";
 import Image from "next/image";
 import { Ring } from "@uiball/loaders"; // Add any loader you prefer
+import { useRouter } from "next/navigation";
 
 const singleProduct = () => {
   const [product, setProduct] = useState([]);
@@ -16,9 +17,10 @@ const singleProduct = () => {
   const productId = searchParams.get("id");
   const [activeImage, setActiveImage] = useState(null);
   const [quantity, setQuantity] = useState(0); // Local state for quantity
+  const [selectedSize, setSelecteSize] = useState(""); // Local state for quantity
 
   const { addProduct, cartProducts, removeProduct } = useContext(CartContext);
-
+  const router = useRouter();
   useEffect(() => {
     axios
       .get(`/api/products/${productId}`)
@@ -38,8 +40,9 @@ const singleProduct = () => {
 
   const handleAddToCart = () => {
     for (let i = 0; i < quantity; i++) {
-      addProduct(productId);
+      addProduct({ product: productId, size: selectedSize });
     }
+    router.push("/cart");
   };
 
   return (
@@ -76,6 +79,7 @@ const singleProduct = () => {
                           >
                             <div
                               key={size._id}
+                              onClick={() => setSelecteSize(size.sizeLabel)}
                               className="py-[2px] px-1 border-2 font-grunge bg-black/60 border-cream rounded-full flex item justify-center "
                             >
                               {size.sizeLabel}
@@ -86,10 +90,22 @@ const singleProduct = () => {
                     </>
                   ) : (
                     <>
-                      <div className="absolute top-0 right-0 p-1 bg-black bg-opacity-60 rounded-bl-lg text-white text-sm">
+                      <div
+                        className="absolute top-[25%] right-2  p-1 glassmorphism bg-opacity-60 rounded-lg py-2 px-1
+                      text-white text-sm shadow-2xl"
+                      >
                         {product.sizes.map((size) => (
-                          <div key={size._id} className="p-1">
-                            {size.sizeLabel}
+                          <div
+                            key={size._id}
+                            className="flex flex-col gap-4 my-2 "
+                          >
+                            <div
+                              key={size._id}
+                              onClick={() => setSelecteSize(size.sizeLabel)}
+                              className="py-[2px] px-1 border-2 font-grunge bg-black/60 border-cream rounded-full flex item justify-center "
+                            >
+                              {size.sizeLabel}
+                            </div>
                           </div>
                         ))}
                       </div>

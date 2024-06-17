@@ -8,7 +8,7 @@ import AddresForm from "@/components/checkOut/AddresForm";
 import Payment from "@/components/checkOut/Payment";
 
 const Checkout = () => {
-  const [amount, setAmount] = useState("");
+  const [total, setTotal] = useState();
   const { cartProducts } = useContext(CartContext);
   const [addressDetails, setAddressDetails] = useState({
     firstName: "",
@@ -24,11 +24,14 @@ const Checkout = () => {
   const [error, setError] = useState("");
 
   useEffect(() => {
-    const total = localStorage.getItem("Clear");
-    if (total) {
-      setAmount(decrytoionOfTotal(total));
+    const totalsString = localStorage.getItem("Total");
+    if (totalsString) {
+      const totals = JSON.parse(totalsString); // Convert the string back to an object
+      setTotal(totals);
     }
   }, []);
+
+  console.log("Amount", total);
 
   function decrytoionOfTotal(value) {
     const passphrase = "Grunge";
@@ -115,26 +118,31 @@ const Checkout = () => {
               {currentStep === 2 && (
                 <Payment
                   onNext={() => setCurrentStep()}
-                  amount={amount}
+                  amount={total.amount}
                   name={
                     addressDetails.firstName + " " + addressDetails.lastName
                   }
+                  products={total?.products}
                 />
               )}
               <div className="text-center mt-4 w-full flex justify-between">
-                <button
-                  className="text-cream bg-light hover:bg-productBg font-bold py-2 px-4 rounded"
-                  onClick={goToPreviousStep}
-                >
-                  Previous
-                </button>
+                {currentStep >= 2 && (
+                  <button
+                    className="text-cream bg-light hover:bg-productBg font-bold py-2 px-4 rounded"
+                    onClick={goToPreviousStep}
+                  >
+                    Previous
+                  </button>
+                )}
                 {error && <p className="text-red-500">{error}</p>}
-                <button
-                  className="text-cream bg-light hover:bg-productBg font-bold py-2 px-4 rounded"
-                  onClick={goToNextStep}
-                >
-                  Next
-                </button>
+                {currentStep <= 1 && (
+                  <button
+                    className="text-cream bg-light hover:bg-productBg font-bold py-2 px-4 rounded"
+                    onClick={goToNextStep}
+                  >
+                    Next
+                  </button>
+                )}
               </div>
             </div>
             <div className="bg-darkCream py-4 px-3 rounded-r-lg shadow-lg">
@@ -142,17 +150,24 @@ const Checkout = () => {
                 Order Summary
               </h1>
               <hr className="w-54 h-1 mx-auto my-2 bg-gray-700 border-0 rounded " />
-              <div className="flex flex-col justify-around border-dashed border-2 bg-light border-productBg  rounded-lg px-2 py-2">
-                <div className="flex justify-between gap-3">
-                  <h1 className="font-sans font-bold">Total Products:</h1>
-                  <h1 className="font-sans font-bold ">
-                    {cartProducts.length}
-                  </h1>
+              <div className="flex flex-col justify-between h-full">
+                <div className="flex flex-col justify-around border-dashed border-2 bg-light border-productBg  rounded-lg px-2 py-2">
+                  <div className="flex justify-between gap-3">
+                    <h1 className="font-sans font-bold">Total Products:</h1>
+                    <h1 className="font-sans font-bold ">
+                      {cartProducts.length}
+                    </h1>
+                  </div>
+                  <div className="flex justify-between ">
+                    <h1 className="font-sans font-bold">Total Price:</h1>
+                    <h1 className="font-sans font-bold">₹ {total?.amount}</h1>
+                  </div>
                 </div>
-                <div className="flex justify-between ">
-                  <h1 className="font-sans font-bold">Total Price:</h1>
-                  <h1 className="font-sans font-bold">₹ {amount}</h1>
-                </div>
+                {currentStep == 2 && (
+                  <button className="block w-full rounded-lg text-brown bg-cream py-1 mb-14 font-bold font-oswald hover:bg-creamLight">
+                    Continue to Payment
+                  </button>
+                )}
               </div>
             </div>
           </div>
