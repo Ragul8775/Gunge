@@ -126,6 +126,9 @@
     animation: glow 3s infinite alternate;
 
    }
+   .glassmorphism {
+    @apply rounded-xl   bg-white/20 shadow-[inset_10px_-50px_94px_0_rgb(199,199,199,0.2)] backdrop-blur p-2;
+  }
    @keyframes glow{
     0% {
       box-shadow: 0 0 5px #635d48;

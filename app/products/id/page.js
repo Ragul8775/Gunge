@@ -45,7 +45,7 @@ const singleProduct = () => {
   return (
     <>
       <Navbar />
-      <div className="pt-14 pattern-3 h-full md:h-screen">
+      <div className="pt-14 pattern-3 h-full">
         <div className="max-w-[1200px] mx-auto flex flex-col items-center justify-center p-4">
           {loading ? (
             <div className="flex justify-center items-center h-screen">
@@ -54,25 +54,54 @@ const singleProduct = () => {
           ) : (
             <div className="grid grid-cols-1 gap-6 my-12 md:grid-cols-[0.7fr_1.0fr]">
               <div className="bg-productBg p-4 rounded-lg">
-                <div>
+                <div className="relative z-10">
                   {activeImage ? (
-                    <Image
-                      src={activeImage}
-                      className="rounded-lg"
-                      alt={product.title}
-                      width={600}
-                      height={600}
-                      priority
-                    />
+                    <>
+                      <Image
+                        src={activeImage}
+                        className="rounded-lg"
+                        alt={product.title}
+                        width={600}
+                        height={600}
+                        priority
+                      />
+                      <div
+                        className="absolute top-[25%] right-2  p-1 glassmorphism bg-opacity-60 rounded-lg py-2 px-1
+                      text-white text-sm shadow-2xl"
+                      >
+                        {product.sizes.map((size) => (
+                          <div
+                            key={size._id}
+                            className="flex flex-col gap-4 my-2 "
+                          >
+                            <div
+                              key={size._id}
+                              className="py-[2px] px-1 border-2 font-grunge bg-black/60 border-cream rounded-full flex item justify-center "
+                            >
+                              {size.sizeLabel}
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    </>
                   ) : (
-                    <Image
-                      src={product?.images?.[0]}
-                      className="rounded-lg"
-                      alt={product.title}
-                      width={600}
-                      height={600}
-                      priority
-                    />
+                    <>
+                      <div className="absolute top-0 right-0 p-1 bg-black bg-opacity-60 rounded-bl-lg text-white text-sm">
+                        {product.sizes.map((size) => (
+                          <div key={size._id} className="p-1">
+                            {size.sizeLabel}
+                          </div>
+                        ))}
+                      </div>
+                      <Image
+                        src={product?.images?.[0]}
+                        className="rounded-lg"
+                        alt={product.title}
+                        width={600}
+                        height={600}
+                        priority
+                      />
+                    </>
                   )}
                 </div>
                 <div className="flex h-28 gap-2 mt-3">
