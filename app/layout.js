@@ -35,7 +35,6 @@ export default function RootLayout({ children }) {
           <CartContextProvider>{children}</CartContextProvider>
         </Provider>
       </body>
-      <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
     </html>
   );
 }

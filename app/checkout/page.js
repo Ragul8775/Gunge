@@ -6,10 +6,18 @@ import CryptoJS from "crypto-js";
 import ProgressBar from "@/components/checkOut/ProgressBar";
 import AddresForm from "@/components/checkOut/AddresForm";
 import Payment from "@/components/checkOut/Payment";
+import axios from "axios";
+import Script from "next/script";
+import { useSession } from "next-auth/react";
+import Confirmation from "@/components/checkOut/Confirmation";
 
 const Checkout = () => {
+  const { data: session } = useSession();
+
   const [total, setTotal] = useState();
   const { cartProducts } = useContext(CartContext);
+  const [orderId, setOrderId] = useState("");
+  const [paymentId, setPaymentId] = useState("");
   const [addressDetails, setAddressDetails] = useState({
     firstName: "",
     lastName: "",
@@ -32,6 +40,83 @@ const Checkout = () => {
   }, []);
 
   console.log("Amount", total);
+  const checkOutHandler = async () => {
+    try {
+      const response = await axios.post("/api/payments", {
+        name: addressDetails.firstName,
+        amount: total?.amount,
+        products: total?.products,
+        address: addressDetails,
+        email: session?.user.email,
+      });
+      console.log("Response:", response.data);
+
+      return response.data.id;
+    } catch (error) {
+      console.error(
+        "Error during checkout:",
+        error.response ? error.response.data : error.message
+      );
+    }
+  };
+
+  const processPayment = async (e) => {
+    e.preventDefault();
+    try {
+      const orderId = await checkOutHandler();
+      const options = {
+        key: process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID, // Enter the Key ID generated from the Dashboard
+        amount: total?.amount * 100, // Amount is in currency subunits. Default currency is INR. Hence, 50000 refers to 50000 paise
+        currency: "INR",
+        name: "Grunge", //your business name
+        description: "Test Transaction",
+        image: "/public/assets/Grunge_logo.jpg",
+        order_id: orderId,
+        handler: async function (response) {
+          const data = {
+            orderCreationId: orderId,
+            razorpayPaymentId: response.razorpay_payment_id,
+            razorpayOrderId: response.razorpay_order_id,
+            razorpaySignature: response.razorpay_signature,
+          };
+
+          const result = await fetch("/api/payments/verification", {
+            method: "POST",
+            body: JSON.stringify(data),
+            headers: { "Content-Type": "application/json" },
+          });
+          const res = await result.json();
+
+          if (res.isOk) {
+            alert("Payment succeeded");
+            setCurrentStep(3);
+            setOrderId(orderId);
+          } else {
+            alert(res.message);
+          }
+        },
+        prefill: {
+          //We recommend using the prefill parameter to auto-fill customer's contact information, especially their phone number
+          name: addressDetails.firstName + " " + addressDetails.lastName, //your customer's name
+          email: addressDetails.email,
+          contact: addressDetails.phone,
+        },
+        notes: {
+          address: "Razorpay Corporate Office",
+        },
+        theme: {
+          color: "#1a120b",
+        },
+      };
+
+      console.log("Payment options:", options);
+      const paymentObject = new window.Razorpay(options);
+      paymentObject.on("payment.failed", function (response) {
+        alert(response.error.description);
+      });
+      paymentObject.open();
+    } catch (error) {}
+  };
 
   function decrytoionOfTotal(value) {
     const passphrase = "Grunge";
@@ -42,7 +127,7 @@ const Checkout = () => {
     return decryptedData;
   }
 
-  const [currentStep, setCurrentStep] = useState(1);
+  const [currentStep, setCurrentStep] = useState(3);
   const totalSteps = 3;
   const stepTitles = ["Address", "Payment", "Confirmation"];
 
@@ -99,6 +184,10 @@ const Checkout = () => {
   return (
     <>
       <Navbar />
+      <Script
+        id="razorpay-checkout-js"
+        src="https://checkout.razorpay.com/v1/checkout.js"
+      />
       <div className="pt-20  min-h-screen pattern-4 py-6 ">
         <div className="container mx-auto max-w-[1200px] px-[20px]">
           <div className="grid grid-cols-1  gap-6 my-12 md:grid-cols-[1.4fr_0.6fr]">
@@ -123,8 +212,11 @@ const Checkout = () => {
                   products={total?.products}
                 />
               )}
+              {currentStep === 3 && (
+                <Confirmation orderId={orderId} email={addressDetails?.email} />
+              )}
               <div className="text-center mt-4 w-full flex justify-between">
-                {currentStep >= 2 && (
+                {currentStep == 2 && (
                   <button
                     className="text-cream bg-light hover:bg-productBg font-bold py-2 px-4 rounded"
                     onClick={goToPreviousStep}
@@ -143,31 +235,36 @@ const Checkout = () => {
                 )}
               </div>
             </div>
-            <div className="bg-darkCream py-4 px-3 rounded-r-lg shadow-lg">
-              <h1 className="font-bold font-grunge text-2xl text-center">
-                Order Summary
-              </h1>
-              <hr className="w-54 h-1 mx-auto my-2 bg-gray-700 border-0 rounded " />
-              <div className="flex flex-col justify-between h-full">
-                <div className="flex flex-col justify-around border-dashed border-2 bg-light border-productBg  rounded-lg px-2 py-2">
-                  <div className="flex justify-between gap-3">
-                    <h1 className="font-sans font-bold">Total Products:</h1>
-                    <h1 className="font-sans font-bold ">
-                      {cartProducts.length}
-                    </h1>
+            {currentStep <= 2 && (
+              <div className="bg-darkCream py-4 px-3 rounded-r-lg shadow-lg">
+                <h1 className="font-bold font-grunge text-2xl text-center">
+                  Order Summary
+                </h1>
+                <hr className="w-54 h-1 mx-auto my-2 bg-gray-700 border-0 rounded " />
+                <div className="flex flex-col justify-between h-full">
+                  <div className="flex flex-col justify-around border-dashed border-2 bg-light border-productBg  rounded-lg px-2 py-2">
+                    <div className="flex justify-between gap-3">
+                      <h1 className="font-sans font-bold">Total Products:</h1>
+                      <h1 className="font-sans font-bold ">
+                        {cartProducts.length}
+                      </h1>
+                    </div>
+                    <div className="flex justify-between ">
+                      <h1 className="font-sans font-bold">Total Price:</h1>
+                      <h1 className="font-sans font-bold">₹ {total?.amount}</h1>
+                    </div>
                   </div>
-                  <div className="flex justify-between ">
-                    <h1 className="font-sans font-bold">Total Price:</h1>
-                    <h1 className="font-sans font-bold">₹ {total?.amount}</h1>
-                  </div>
+                  {currentStep == 2 && (
+                    <button
+                      className="block w-full rounded-lg text-brown bg-cream py-1 mb-14 font-bold font-oswald hover:bg-creamLight"
+                      onClick={processPayment}
+                    >
+                      Continue to Payment
+                    </button>
+                  )}
                 </div>
-                {currentStep == 2 && (
-                  <button className="block w-full rounded-lg text-brown bg-cream py-1 mb-14 font-bold font-oswald hover:bg-creamLight">
-                    Continue to Payment
-                  </button>
-                )}
               </div>
-            </div>
+            )}
           </div>
         </div>
       </div>

@@ -23,28 +23,33 @@ const Payment = ({ amount, addressDetails, products }) => {
           </tbody>
         </table>
       </div>
-      <div className="bg-cream rounded-lg py-2 px-3">
+      <div className="bg-cream rounded-lg py-2 px-3 font-oswald">
         <div className="">
           <h1 className="text-lg font-grunge text-brown ">Delivery Address</h1>
           <hr />
         </div>
-        <div>
-          <p className="font-bold">
-            Name:
-            <span className="font-md">
-              {addressDetails.firstName + " " + addressDetails.lastName}
-            </span>
+        <div className="flex gap-6 items-start">
+          <p className="font-bold">Name:</p>
+          <p className="font-md">
+            {addressDetails.firstName + " " + addressDetails.lastName}
           </p>
         </div>
-        <div>
-          <p className="font-bold">
-            Address:
-            <span className="font-md">
-              {addressDetails.addressLine1}
-              {addressDetails.addressLine2}
-              {addressDetails.city},{addressDetails.state}
-            </span>
-          </p>
+        <div className="flex gap-2 items-start">
+          <p className="font-bold">Address:</p>
+          <div>
+            <p className="font-md">{addressDetails.addressLine1}</p>
+            <p className="font-md">{addressDetails.addressLine2}</p>
+            <p className="font-md">
+              {addressDetails.city}-{addressDetails.pinCode}
+            </p>
+            <p className="font-md">{addressDetails.state}</p>
+          </div>
+        </div>
+        <div className="flex gap-6 items-start">
+          <p className="font-bold">Phone:</p>
+          <div>
+            <p className="font-md">{addressDetails.phone}</p>
+          </div>
         </div>
       </div>
     </div>
