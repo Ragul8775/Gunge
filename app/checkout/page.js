@@ -119,9 +119,7 @@ const Checkout = () => {
                 <Payment
                   onNext={() => setCurrentStep()}
                   amount={total.amount}
-                  name={
-                    addressDetails.firstName + " " + addressDetails.lastName
-                  }
+                  addressDetails={addressDetails}
                   products={total?.products}
                 />
               )}
