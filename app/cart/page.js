@@ -15,6 +15,7 @@ const Cart = () => {
   const [promoInput, setPromoInput] = useState("");
   const [total, setTotal] = useState(0);
   const router = useRouter();
+  const [discountTotal, setDiscountTotal] = useState(0);
   const {
     cartProducts,
     addProduct,
@@ -54,10 +55,11 @@ const Cart = () => {
     }, 0);
 
     setTotal(newTotal);
-  }, [aggregatedCartProducts, products]);
-  console.log(total);
 
-  const discountTotal = Math.round(total - (total * discount) / 100);
+    const newDiscountTotal = Math.round(newTotal - (newTotal * discount) / 100);
+    setDiscountTotal(newDiscountTotal);
+  }, [aggregatedCartProducts, products, discount]);
+
   const handleApplyPromocode = () => {
     applyPromoCode(promoInput);
     setPromoInput("");

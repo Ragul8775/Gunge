@@ -31,9 +31,15 @@ export function CartContextProvider({ children }) {
   };
 
   const removeProduct = (productId) => {
-    setCartProducts((prev) =>
-      prev.filter((item) => item.product !== productId)
-    );
+    let found = false;
+    const updatedCart = cartProducts.filter((item) => {
+      if (!found && item.product === productId) {
+        found = true;
+        return false; // Remove the first occurrence
+      }
+      return true; // Keep all other items
+    });
+    setCartProducts(updatedCart);
   };
 
   const updateTotal = (products) => {
@@ -55,18 +61,22 @@ export function CartContextProvider({ children }) {
     EXTRA30: 20,
   };
 
-  function applyPromoCode(code) {
+  const applyPromoCode = (code) => {
     if (code in promoCodes) {
       setDiscount(promoCodes[code]);
       setPromocode(code);
-      ls.setItem(
+      ls?.setItem(
         "Discount",
         JSON.stringify({ code, discount: promoCodes[code] })
       );
     } else {
-      alert("Invalid PromoCode");
+      alert("Invalid Promo Code");
     }
-  }
+  };
+
+  const clearCart = () => {
+    setCartProducts([]);
+  };
   return (
     <CartContext.Provider
       value={{
@@ -77,6 +87,7 @@ export function CartContextProvider({ children }) {
         updateTotal,
         discount,
         applyPromoCode,
+        clearCart,
       }}
     >
       {children}
