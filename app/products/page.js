@@ -11,7 +11,7 @@ const page = () => {
       setProducts(response.data);
     });
   }, []);
-
+  console.log("Orders", products);
   return (
     <>
       <Navbar />
