@@ -16,10 +16,11 @@ const singleProduct = () => {
   const searchParams = useSearchParams();
   const productId = searchParams.get("id");
   const [activeImage, setActiveImage] = useState(null);
-  const [quantity, setQuantity] = useState(0); // Local state for quantity
+  const [quantity, setQuantity] = useState(1); // Local state for quantity
   const [selectedSize, setSelecteSize] = useState(""); // Local state for quantity
 
-  const { addProduct, cartProducts, removeProduct } = useContext(CartContext);
+  const { addProduct, cartProducts, removeProduct, clearCart } =
+    useContext(CartContext);
   const router = useRouter();
   useEffect(() => {
     axios
@@ -39,6 +40,10 @@ const singleProduct = () => {
   }, [productId]);
 
   const handleAddToCart = () => {
+    if (!selectedSize) {
+      alert("Please Select the size");
+      return;
+    }
     for (let i = 0; i < quantity; i++) {
       addProduct({ product: productId, size: selectedSize });
     }
@@ -75,12 +80,16 @@ const singleProduct = () => {
                         {product.sizes.map((size) => (
                           <div
                             key={size._id}
-                            className="flex flex-col gap-4 my-2 "
+                            className="flex flex-col gap-4 my-2"
                           >
                             <div
-                              key={size._id}
                               onClick={() => setSelecteSize(size.sizeLabel)}
-                              className="py-[2px] px-1 border-2 font-grunge bg-black/60 border-cream rounded-full flex item justify-center "
+                              className={`py-[2px] px-1 border-2 font-grunge bg-black/60  rounded-full flex items-center justify-center cursor-pointer
+              ${
+                selectedSize === size.sizeLabel
+                  ? " border-brown shadow-lg"
+                  : "border-cream"
+              }`}
                             >
                               {size.sizeLabel}
                             </div>

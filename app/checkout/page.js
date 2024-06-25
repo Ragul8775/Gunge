@@ -30,7 +30,7 @@ const Checkout = () => {
     pinCode: "",
   });
   const [error, setError] = useState("");
-
+  const { clearCart } = useContext(CartContext);
   useEffect(() => {
     const totalsString = localStorage.getItem("Total");
     if (totalsString) {
@@ -91,6 +91,7 @@ const Checkout = () => {
             alert("Payment succeeded");
             setCurrentStep(3);
             setOrderId(orderId);
+            clearCart();
           } else {
             alert(res.message);
           }
@@ -127,7 +128,7 @@ const Checkout = () => {
     return decryptedData;
   }
 
-  const [currentStep, setCurrentStep] = useState(3);
+  const [currentStep, setCurrentStep] = useState(1);
   const totalSteps = 3;
   const stepTitles = ["Address", "Payment", "Confirmation"];
 
