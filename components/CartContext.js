@@ -46,15 +46,20 @@ export function CartContextProvider({ children }) {
     const newTotal = products.reduce((acc, item) => {
       return acc + item.price * item.quantity;
     }, 0);
-    setTotal({ amount: newTotal, products });
+    const newDiscountTotal = discount
+      ? Math.round(newTotal - (newTotal * discount) / 100)
+      : newTotal;
+
+    setTotal({ amount: newDiscountTotal, products });
     ls?.setItem(
       "Total",
       JSON.stringify({
-        amount: newTotal,
+        amount: newDiscountTotal,
         products,
       })
     );
   };
+
   const promoCodes = {
     SAVE10: 10,
     GRUNGE20: 15,

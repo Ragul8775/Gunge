@@ -96,7 +96,7 @@ const Cart = () => {
 
       updateTotal(aggregatedProducts);
     }
-  }, [products, cartProducts]);
+  }, [products, cartProducts, discount]);
   const handleCheckOut = (e) => {
     e.preventDefault();
 

@@ -10,12 +10,13 @@ import axios from "axios";
 import Script from "next/script";
 import { useSession } from "next-auth/react";
 import Confirmation from "@/components/checkOut/Confirmation";
-
+import { SyncLoader } from "react-spinners";
 const Checkout = () => {
   const { data: session } = useSession();
 
   const [total, setTotal] = useState();
   const { cartProducts } = useContext(CartContext);
+  const [loading, setLoading] = useState(false);
   const [orderId, setOrderId] = useState("");
   const [paymentId, setPaymentId] = useState("");
   const [addressDetails, setAddressDetails] = useState({
@@ -62,6 +63,7 @@ const Checkout = () => {
 
   const processPayment = async (e) => {
     e.preventDefault();
+    setLoading(true);
     try {
       const orderId = await checkOutHandler();
       const options = {
@@ -116,7 +118,11 @@ const Checkout = () => {
         alert(response.error.description);
       });
       paymentObject.open();
-    } catch (error) {}
+      setLoading(false);
+    } catch (error) {
+      console.log(error);
+      setLoading(false);
+    }
   };
 
   function decrytoionOfTotal(value) {
@@ -257,10 +263,21 @@ const Checkout = () => {
                   </div>
                   {currentStep == 2 && (
                     <button
-                      className="block w-full rounded-lg text-brown bg-cream py-1 mb-14 font-bold font-oswald hover:bg-creamLight"
+                      className=" w-full rounded-lg text-brown bg-cream py-1 mb-14 font-bold font-oswald hover:bg-creamLight flex justify-center items-center"
                       onClick={processPayment}
+                      disabled={loading}
                     >
-                      Continue to Payment
+                      {loading ? (
+                        <SyncLoader
+                          color="#1a120b"
+                          loading={loading}
+                          size={8}
+                          speedMultiplier={1}
+                          className="my-2"
+                        />
+                      ) : (
+                        "Continue to Payment"
+                      )}
                     </button>
                   )}
                 </div>
