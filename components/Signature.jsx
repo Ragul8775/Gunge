@@ -4,8 +4,10 @@ import React, { useState, useEffect, useContext } from "react";
 import Link from "next/link";
 import axios from "axios";
 import { CartContext } from "./CartContext";
+import { useRouter } from "next/navigation";
 const Signature = () => {
   const [products, setProducts] = useState([]);
+  const router = useRouter();
   console.log(products);
   useEffect(() => {
     axios.get("/api/products").then((response) => {
@@ -15,8 +17,7 @@ const Signature = () => {
 
   const { addProduct } = useContext(CartContext);
   const addFeaturedToCart = (product) => {
-    console.log(product._id);
-    addProduct(product._id);
+    router.push(`/products/${product}`);
   };
   return (
     <div className="pattern-1">
@@ -77,7 +78,9 @@ const Signature = () => {
                     <div className="flex item-center justify-between mt-3">
                       <button
                         className="bg-darkCream border-2 border-brown text-brown font-grunge hover:bg-red-700  font-bold py-2 px-5 rounded-3xl shadow-lg"
-                        onClick={() => addFeaturedToCart(product)}
+                        onClick={() =>
+                          router.push(`/products/id?id=${product._id}`)
+                        }
                       >
                         Add
                       </button>

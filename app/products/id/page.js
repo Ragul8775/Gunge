@@ -38,6 +38,16 @@ const SingleProduct = () => {
         setLoading(false); // Set loading to false on error
       });
   }, [productId]);
+  const handleBuy = () => {
+    if (!selectedSize) {
+      alert("Please Select the size");
+      return;
+    }
+    for (let i = 0; i < quantity; i++) {
+      addProduct({ product: productId, size: selectedSize });
+    }
+    router.push("/cart");
+  };
 
   const handleAddToCart = () => {
     if (!selectedSize) {
@@ -47,7 +57,6 @@ const SingleProduct = () => {
     for (let i = 0; i < quantity; i++) {
       addProduct({ product: productId, size: selectedSize });
     }
-    router.push("/cart");
   };
 
   return (
@@ -191,7 +200,10 @@ const SingleProduct = () => {
                   </div>
                 </div>
                 <div className="flex gap-8 items-center">
-                  <button className="flex items-center justify-around px-8 text-cream bg-brown shadow-xl py-3 gap-2 text-xl font-grunge font-bold rounded-lg">
+                  <button
+                    className="flex items-center justify-around px-8 text-cream bg-brown shadow-xl py-3 gap-2 text-xl font-grunge font-bold rounded-lg"
+                    onClick={handleBuy}
+                  >
                     <IoBagCheckOutline />
                     <h1>Buy </h1>
                   </button>
