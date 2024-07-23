@@ -10,7 +10,7 @@ import Image from "next/image";
 import { Ring } from "@uiball/loaders"; // Add any loader you prefer
 import { useRouter } from "next/navigation";
 
-const singleProduct = () => {
+const SingleProduct = () => {
   const [product, setProduct] = useState([]);
   const [loading, setLoading] = useState(true); // Loading state
   const searchParams = useSearchParams();
@@ -212,4 +212,4 @@ const singleProduct = () => {
   );
 };
 
-export default singleProduct;
+export default SingleProduct;
