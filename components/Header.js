@@ -11,6 +11,12 @@ const Header = () => {
   const { cartProducts } = useContext(CartContext);
   const { data: session } = useSession();
   const [toggleDropdown, setToggleDropdown] = useState(false);
+  const getCallbackUrl = () => {
+    if (typeof window !== "undefined") {
+      return encodeURIComponent(window.location.href);
+    }
+    return "";
+  };
   return (
     <nav className="fixed top-0 left-0 w-full z-50 bg-gray-300 bg-opacity-60 sm:bg-opacity-100 font-grunge h-14 flex items-center">
       <div className="absolute sm:hidden">
@@ -89,9 +95,7 @@ const Header = () => {
         ) : (
           <>
             <Link
-              href={`/login?callbackUrl=${encodeURIComponent(
-                window.location.href
-              )}`}
+              href={`/login?callbackUrl=${getCallbackUrl()}`}
               className="hover:underline cursor-pointer hidden sm:block"
             >
               Login

@@ -100,11 +100,10 @@ const Cart = () => {
   const handleCheckOut = (e) => {
     e.preventDefault();
 
-    router.push(
-      session?.user
-        ? "/checkout"
-        : `/login?callbackUrl=${encodeURIComponent(window.location.href)}`
-    );
+    const redirectUrl = session?.user
+      ? "/checkout"
+      : `/login?callbackUrl=${encodeURIComponent(window.location.href)}`;
+    router.push(redirectUrl);
   };
 
   return (
