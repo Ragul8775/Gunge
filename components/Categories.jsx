@@ -9,8 +9,8 @@ const Categories = () => {
             <div className="md:order-2 w-64 mx-auto ">
               <Image
                 src="/assets/images/Men.png"
-                height={120}
-                width={120}
+                height={379}
+                width={531}
                 alt=""
                 className="w-full h-auto object-cover "
               />
@@ -27,7 +27,7 @@ const Categories = () => {
                 from our mens collection.
               </p>
               <button className="mt-8 bg-brown text-cream rounded-lg font-oswald py-2 px-4 uppercase">
-                Buy Now
+                <a href="/products">Buy Now</a>
               </button>
             </div>
           </div>
@@ -39,8 +39,8 @@ const Categories = () => {
           <div className="md:order-1 w-64 mx-auto ">
             <Image
               src="/assets/images/women.png"
-              height={120}
-              width={120}
+              height={564}
+              width={408}
               alt=""
               className="w-full h-auto object-cover "
             />
@@ -57,7 +57,7 @@ const Categories = () => {
               stitch and detail.
             </p>
             <button className="mt-8 bg-cream text-brown rounded-lg font-oswald py-2 px-4 uppercase">
-              Buy Now
+              <a href="/products">Buy Now</a>
             </button>
           </div>
         </div>
@@ -69,8 +69,8 @@ const Categories = () => {
             <div className="md:order-2 w-64 mx-auto ">
               <Image
                 src="/assets/images/accessories.png"
-                height={120}
-                width={120}
+                height={562}
+                width={430}
                 alt=""
                 className="w-full h-auto object-cover "
               />
@@ -87,7 +87,7 @@ const Categories = () => {
                 for every moment
               </p>
               <button className="mt-8 bg-brown text-cream rounded-lg font-oswald py-2 px-4 uppercase">
-                Buy Now
+                <a href="/products">Buy Now</a>
               </button>
             </div>
           </div>

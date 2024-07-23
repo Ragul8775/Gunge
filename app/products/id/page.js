@@ -53,7 +53,7 @@ const singleProduct = () => {
   return (
     <>
       <Navbar />
-      <div className="pt-14 pattern-3 h-full">
+      <div className="pt-14 pattern-3 min-h-screen">
         <div className="max-w-[1200px] mx-auto flex flex-col items-center justify-center p-4">
           {loading ? (
             <div className="flex justify-center items-center h-screen">
