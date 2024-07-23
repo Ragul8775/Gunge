@@ -4,7 +4,7 @@ import React, { useState, useEffect } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import axios from "axios";
-const page = () => {
+const ProductPage = () => {
   const [products, setProducts] = useState([]);
   useEffect(() => {
     axios.get("/api/products").then((response) => {
@@ -78,4 +78,4 @@ const page = () => {
   );
 };
 
-export default page;
+export default ProductPage;
