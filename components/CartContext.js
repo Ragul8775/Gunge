@@ -16,7 +16,7 @@ export function CartContextProvider({ children }) {
     if (storedCart) {
       setCartProducts(JSON.parse(storedCart));
     }
-  }, []);
+  }, [ls]);
 
   useEffect(() => {
     if (cartProducts.length > 0) {
