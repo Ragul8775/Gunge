@@ -23,8 +23,9 @@ const Footer = () => {
             <h2 className="text-4xl font-bold mb-4 font-grunge">GRUNGE</h2>
             <p className="max-w-sm">
               Embrace the raw intensity of rebellion with threads that speak
-              volumes. Our collection isn't just apparel—it's a tribute to the
-              undying echoes of grunge, crafted for the contemporary maverick.
+              volumes. Our collection isn&#39;t just apparel&#8212;it&#39;s a
+              tribute to the undying echoes of grunge, crafted for the
+              contemporary maverick.
             </p>
           </div>
         </div>
