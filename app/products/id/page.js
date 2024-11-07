@@ -11,7 +11,7 @@ import { Ring } from "@uiball/loaders"; // Add any loader you prefer
 import { useRouter } from "next/navigation";
 
 const SingleProduct = () => {
-  const [product, setProduct] = useState([]);
+  const [product, setProduct] = useState(null);
   const [loading, setLoading] = useState(true); // Loading state
   const searchParams = useSearchParams();
   const productId = searchParams.get("id");
@@ -22,15 +22,16 @@ const SingleProduct = () => {
   const { addProduct, cartProducts, removeProduct, clearCart } =
     useContext(CartContext);
   const router = useRouter();
+
   useEffect(() => {
+    // Fetch the product data
     axios
       .get(`/api/products/${productId}`)
       .then((response) => {
-        console.log("Product:", response.data);
         setProduct(response.data);
-        setLoading(false); // Set loading to false when data is fetched
+        setLoading(false);
         if (response.data.images && response.data.images.length > 0) {
-          setActiveImage(response.data.images[0]); // Ensure images array exists and has at least one item
+          setActiveImage(response.data.images[0]);
         }
       })
       .catch((error) => {
