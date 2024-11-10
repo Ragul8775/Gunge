@@ -24,20 +24,24 @@ const SingleProduct = () => {
   const router = useRouter();
 
   useEffect(() => {
-    // Fetch the product data
+    if (!productId) {
+      setLoading(false);
+      return;
+    }
+
     axios
       .get(`/api/products/${productId}`)
       .then((response) => {
-            setProduct(response.data || {}); 
+        const productData = response.data;
+        setProduct(productData || {});
         setLoading(false);
-        if (response.data.images && response.data.images.length > 0) {
-          setActiveImage(response.data.images[0]);
+        if (productData?.images?.length > 0) {
+          setActiveImage(productData.images[0]);
         }
       })
       .catch((error) => {
         console.error("Failed to fetch product:", error);
-        setProduct({}); // Or some default empty object to avoid null errors
-  setLoading(false); // Set loading to false on error
+        setLoading(false);
       });
   }, [productId]);
   const handleBuy = () => {
