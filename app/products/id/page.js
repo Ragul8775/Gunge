@@ -28,7 +28,7 @@ const SingleProduct = () => {
     axios
       .get(`/api/products/${productId}`)
       .then((response) => {
-        setProduct(response.data);
+            setProduct(response.data || {}); 
         setLoading(false);
         if (response.data.images && response.data.images.length > 0) {
           setActiveImage(response.data.images[0]);
@@ -36,7 +36,8 @@ const SingleProduct = () => {
       })
       .catch((error) => {
         console.error("Failed to fetch product:", error);
-        setLoading(false); // Set loading to false on error
+        setProduct({}); // Or some default empty object to avoid null errors
+  setLoading(false); // Set loading to false on error
       });
   }, [productId]);
   const handleBuy = () => {
