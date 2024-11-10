@@ -87,7 +87,7 @@ const SingleProduct = () => {
                         className="absolute top-[25%] right-2  p-1 glassmorphism bg-opacity-60 rounded-lg py-2 px-1
                       text-white text-sm shadow-2xl"
                       >
-                        {product.sizes.map((size) => (
+                        {product?.sizes?.map((size) => (
                           <div
                             key={size._id}
                             className="flex flex-col gap-4 my-2"
